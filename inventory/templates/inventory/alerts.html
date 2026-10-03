@@ -1,0 +1,320 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <title>PharmaSense AI | Alerts</title>
+
+    <style>
+        * {
+            box-sizing: border-box;
+            margin: 0;
+            padding: 0;
+        }
+
+        body {
+            font-family: Arial, sans-serif;
+            background: #f4f7f9;
+            color: #263238;
+        }
+
+        .header {
+            background: #176b87;
+            color: white;
+            padding: 22px 40px;
+        }
+
+        .header h1 {
+            font-size: 28px;
+            margin-bottom: 5px;
+        }
+
+        .header p {
+            font-size: 14px;
+            opacity: 0.9;
+        }
+
+        .container {
+            padding: 30px 40px;
+            max-width: 1400px;
+            margin: auto;
+        }
+
+        .back {
+            display: inline-block;
+            margin-bottom: 25px;
+            color: #176b87;
+            text-decoration: none;
+            font-weight: bold;
+        }
+
+        .section {
+            background: white;
+            padding: 25px;
+            border-radius: 12px;
+            margin-bottom: 25px;
+            box-shadow: 0 3px 12px rgba(0, 0, 0, 0.08);
+        }
+
+        .section h2 {
+            margin-bottom: 20px;
+            font-size: 20px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+        }
+
+        th,
+        td {
+            padding: 13px;
+            text-align: left;
+            border-bottom: 1px solid #eeeeee;
+        }
+
+        th {
+            background: #f5f7f8;
+            color: #455a64;
+        }
+
+        tr:hover {
+            background: #fafafa;
+        }
+
+        .empty {
+            color: #78909c;
+            padding: 10px 0;
+        }
+
+        .danger {
+            color: #d32f2f;
+            font-weight: bold;
+        }
+
+        .warning {
+            color: #f57c00;
+            font-weight: bold;
+        }
+
+        .low {
+            color: #c62828;
+            font-weight: bold;
+        }
+
+        .footer {
+            text-align: center;
+            padding: 20px;
+            color: #78909c;
+            font-size: 13px;
+        }
+
+        @media (max-width: 800px) {
+
+            .container {
+                padding: 20px;
+            }
+
+            .header {
+                padding: 20px;
+            }
+
+            table {
+                font-size: 13px;
+            }
+
+            th,
+            td {
+                padding: 9px;
+            }
+        }
+    </style>
+</head>
+
+<body>
+
+    <div class="header">
+        <h1>💊 PharmaSense AI</h1>
+        <p>Pharmacy Inventory & Demand Forecasting System</p>
+    </div>
+
+
+    <div class="container">
+
+        <a href="/" class="back">← Back to Dashboard</a>
+
+
+        <!-- EXPIRED MEDICINES -->
+
+        <div class="section">
+
+            <h2>🔴 Expired Medicines</h2>
+
+            {% if expired_batches %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Batch</th>
+                        <th>Expiry Date</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for batch in expired_batches %}
+
+                    <tr>
+
+                        <td>{{ batch.medicine.name }}</td>
+
+                        <td>{{ batch.batch_number }}</td>
+
+                        <td class="danger">
+                            {{ batch.expiry_date }}
+                        </td>
+
+                        <td>
+                            {{ batch.quantity }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <p class="empty">
+                ✅ No expired medicines.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- EXPIRING SOON -->
+
+        <div class="section">
+
+            <h2>🟠 Medicines Expiring Within 90 Days</h2>
+
+            {% if expiring_batches %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Batch</th>
+                        <th>Expiry Date</th>
+                        <th>Quantity</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for batch in expiring_batches %}
+
+                    <tr>
+
+                        <td>{{ batch.medicine.name }}</td>
+
+                        <td>{{ batch.batch_number }}</td>
+
+                        <td class="warning">
+                            {{ batch.expiry_date }}
+                        </td>
+
+                        <td>
+                            {{ batch.quantity }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <p class="empty">
+                ✅ No medicines expiring within 90 days.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+
+        <!-- LOW STOCK -->
+
+        <div class="section">
+
+            <h2>⚠️ Low Stock Medicines</h2>
+
+            {% if low_stock_batches %}
+
+            <table>
+
+                <thead>
+                    <tr>
+                        <th>Medicine</th>
+                        <th>Batch</th>
+                        <th>Current Stock</th>
+                    </tr>
+                </thead>
+
+                <tbody>
+
+                    {% for batch in low_stock_batches %}
+
+                    <tr>
+
+                        <td>{{ batch.medicine.name }}</td>
+
+                        <td>{{ batch.batch_number }}</td>
+
+                        <td class="low">
+                            {{ batch.quantity }}
+                        </td>
+
+                    </tr>
+
+                    {% endfor %}
+
+                </tbody>
+
+            </table>
+
+            {% else %}
+
+            <p class="empty">
+                ✅ No low-stock medicines.
+            </p>
+
+            {% endif %}
+
+        </div>
+
+    </div>
+
+
+    <div class="footer">
+        PharmaSense AI © 2026 | Pharmacy Inventory Management
+    </div>
+
+</body>
+
+</html>
